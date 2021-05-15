@@ -1,0 +1,54 @@
+//..........Run a Java main Method Using Gradle........
+//Running with the Application Plugin
+plugins {
+    id 'java'
+    id "application"
+}
+apply plugin : "java"
+ext {
+    javaMainClass = "com.example.Main"
+}
+
+application {
+    mainClassName = javaMainClass
+}
+//Running with the JavaExec Task
+task runWithJavaExec(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = javaMainClass
+}
+//Running with the Exec Task
+//Running from the Compiled Build Output
+task runWithExec(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    description = "Run the main class with ExecTask"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), javaMainClass
+}
+//. Running from an Output Jar
+/*task runWithExecJarOnClassPath(type: Exec) {
+    dependsOn jar
+    group = "Execution"
+    description = "Run the mainClass from the output jar in classpath with ExecTask"
+    commandLine "java", "-classpath", jar.archiveFile.get(), javaMainClass
+}*/
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
